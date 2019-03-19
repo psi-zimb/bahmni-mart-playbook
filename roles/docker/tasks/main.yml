@@ -1,18 +1,30 @@
-
-- name: Check if docker needs an update
+- name: Check if docker-io present
   yum:
-    list: docker-engine
+    list: docker-io
   register: docker_info
   ignore_errors: true
 
-- name: Uninstall docker
+- name: Uninstall docker-io
+  yum:
+    name: docker-io
+    state: absent
+  when: docker_info.results|length != 0
+
+- name: Check if docker-engine needs an update
+  yum:
+    list: docker-engine
+  register: docker_engine_info
+  ignore_errors: true
+
+- name: Uninstall docker-engine
   yum:
     name: docker-engine
     state: absent
-  when: docker_info.results|length != 0 and docker_info.results[0].version != "{{ docker_version }}"
+  when: docker_engine_info.results|length != 0 and docker_engine_info.results[0].version != "{{ docker_version }}"
 
-- name: Install docker
+- name: Install docker-engine
   command: yum install -y https://get.docker.com/rpm/1.7.1/centos-6/RPMS/x86_64/docker-engine-1.7.1-1.el6.x86_64.rpm
+  when: docker_engine_info.results|length == 0 or docker_engine_info.results[0].version != "{{ docker_version }}"
 
 - name: Evaluate docker compose url
   shell: "echo {{ docker_compose_url }}"
@@ -29,4 +41,3 @@
     name: docker
     enabled: yes
     state: started
-
