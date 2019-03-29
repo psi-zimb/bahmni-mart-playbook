@@ -59,8 +59,8 @@
     insertafter: "metabase"
     state: present
     block: |
-      host {{ metabase_db_name }} {{ metabase_db_user }} {{ metabase_db_server }}/32 trust #access to metabase db server
-      host {{ metabase_db_name }} {{ metabase_db_user }} {{ default_docker_ip }}/16 trust #access through docker IP
+      host {{ metabase_db_name }} {{ metabase_db_user }} {{ metabase_db_server }}/32 md5 #access to metabase db server
+      host {{ metabase_db_name }} {{ metabase_db_user }} {{ default_docker_ip }}/16 md5 #access through docker IP
 
 - name: Reload postgresql on active machine
   service:

@@ -3,8 +3,6 @@
   become: yes
   roles:
     - { role: postgres, postgres_user: analytics }
-    - { role: pg_hba, db_user: "{{ analytics_db_user }}", db_name: "{{ analytics_db_name }}", app_server_group: bahmni-mart,
-                          master_db_group: bahmni-mart-db, slave_db_group: bahmni-mart-db-slave}
     - { role: postgres-replication, replication_user: "{{ analytics_db_user }}", master_db: "{{ groups['bahmni-mart-db'][0] }}" }
 
 - hosts: bahmni-mart
@@ -22,8 +20,6 @@
   become: yes
   roles:
     - { role: postgres, postgres_user: metabase }
-    - { role: pg_hba, db_user: "{{ metabase_db_user }}", db_name: "{{ metabase_db_name }}", app_server_group: metabase,
-                          master_db_group: metabase-db, slave_db_group: metabase-db-slave}
     - { role: postgres-replication, replication_user: "{{ metabase_db_user }}", master_db: "{{ groups['metabase-db'][0] }}" }
 
 - hosts: metabase

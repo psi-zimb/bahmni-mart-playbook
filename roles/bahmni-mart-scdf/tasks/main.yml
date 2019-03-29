@@ -53,7 +53,7 @@
     insertafter: "bahmni-mart-scdf"
     state: present
     block: |
-      host {{ analytics_db_name }} {{ analytics_db_user }} {{ default_docker_ip }}/16 trust #access through docker IP
+      host {{ analytics_db_name }} {{ analytics_db_user }} {{ default_docker_ip }}/16 md5 #access through docker IP
 
 - name: Reload postgresql on active machine
   service:
