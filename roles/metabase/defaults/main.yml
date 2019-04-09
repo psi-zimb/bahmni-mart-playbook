@@ -10,6 +10,10 @@ metabase_db_type: postgres
 metabase_db_port: 5432
 metabase_db_server: "{{ groups['metabase-db'][0] | default(default_docker_ip, true) }}"
 metabase_docker_compose_location: "/opt/bahmni-mart/metabase-docker-compose.yml"
+metabase_ssl_docker_compose_location: "/opt/bahmni-mart/metabase-ssl-docker-compose.yml"
 metabase_docker_image: "metabase/metabase:v0.31.2"
 metabase_docker_container_name: metabase
 postgres_version: 9.2
+metabase_with_ssl: "{{metabase_with_ssl}}"
+bahmni_lets_encrypt_cert_dir: "{{bahmni_lets_encrypt_cert_dir}}"
+metabase_keystore_password: "{{metabase_keystore_password}}"

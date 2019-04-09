@@ -19,6 +19,14 @@
     owner={{ bahmni_user }}
     group={{ bahmni_group }}
 
+- name: Copy pem to jks conversion script
+  template:
+    src=pemtojks.sh
+    dest=/opt/bahmni-mart/bin/pemtojks.sh
+    mode=755
+    owner={{ bahmni_user }}
+    group={{ bahmni_group }}
+
 - name: Set metabase_db_server variable
   set_fact:
     metabase_db_server: "{{ default_docker_ip }}"
@@ -28,6 +36,14 @@
   template:
     src=docker-compose.yml.j2
     dest={{ metabase_docker_compose_location }}
+    mode=644
+    owner={{ bahmni_user }}
+    group={{ bahmni_group }}
+
+- name: Copy docker-compose file for metabase with ssl
+  template:
+    src=docker-compose.ssl.yml.j2
+    dest={{ metabase_ssl_docker_compose_location }}
     mode=644
     owner={{ bahmni_user }}
     group={{ bahmni_group }}
@@ -95,8 +111,21 @@
   shell: docker rmi $(docker images -a | grep 'metabase' | awk '{print $ 3}')
   ignore_errors: true
 
-- name: Create metabase docker container
+- name: Create metabase docker container without ssl certificates
   command: docker-compose -f {{ metabase_docker_compose_location }} up -d
+  when: metabase_with_ssl is not defined
+            or metabase_with_ssl|bool == false
+            or not bahmni_lets_encrypt_cert_dir
+            or not metabase_keystore_password
+
+- name: Create metabase docker container with ssl certificates
+  shell: |
+    /opt/bahmni-mart/bin/pemtojks.sh {{ bahmni_lets_encrypt_cert_dir }} {{ metabase_keystore_password }}
+    docker-compose -f {{ metabase_ssl_docker_compose_location }} up -d
+  when: metabase_with_ssl is defined
+            and metabase_with_ssl|bool == true
+            and bahmni_lets_encrypt_cert_dir
+            and metabase_keystore_password
 
 - block:
 

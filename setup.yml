@@ -3,3 +3,6 @@ analytics_db_user: analytics
 metabase_db_user: metabase
 analytics_db_name: analytics
 metabase_db_name: metabase
+metabase_with_ssl: false
+bahmni_lets_encrypt_cert_dir: ""
+metabase_keystore_password: ""

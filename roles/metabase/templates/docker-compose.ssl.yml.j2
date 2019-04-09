@@ -1,0 +1,18 @@
+metabase:
+    image: {{ metabase_docker_image }}
+    container_name: {{ metabase_docker_container_name }}
+    ports:
+      - "{{ metabase_port }}:8443"
+    environment:
+      - MB_DB_TYPE={{ metabase_db_type }}
+      - MB_DB_DBNAME={{ metabase_db_name }}
+      - MB_DB_PORT={{ metabase_db_port }}
+      - MB_DB_USER={{ metabase_db_user }}
+      - MB_DB_PASS={{ metabase_db_password }}
+      - MB_DB_HOST={{ metabase_db_server }}
+      - MB_JETTY_SSL=true
+      - MB_JETTY_SSL_Port=8443
+      - MB_JETTY_SSL_Keystore=/home/metabase_ssl.jks
+      - MB_JETTY_SSL_Keystore_Password={{ metabase_keystore_password }}
+    volumes:
+      - /etc/metabase/ssl:/home
