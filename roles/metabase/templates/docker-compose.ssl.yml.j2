@@ -16,3 +16,4 @@ metabase:
       - MB_JETTY_SSL_Keystore_Password={{ metabase_keystore_password }}
     volumes:
       - /etc/metabase/ssl:/home
+    restart: always
