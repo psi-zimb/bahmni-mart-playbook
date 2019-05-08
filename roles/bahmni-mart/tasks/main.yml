@@ -37,6 +37,7 @@
   postgresql_user:
     name: "{{ analytics_db_user }}"
     password: "{{ analytics_db_password }}"
+  when: passive is not defined or passive !='yes'
 
 - name: Create bahmni-mart DB
   postgresql_db:

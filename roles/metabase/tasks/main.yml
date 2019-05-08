@@ -52,6 +52,7 @@
   postgresql_user:
     name: "{{ metabase_db_user }}"
     password: "{{ metabase_db_password }}"
+  when: passive is not defined or passive !='yes'
 
 
 - name: Create metabase DB
