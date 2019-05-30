@@ -1,4 +1,4 @@
-bahmni_mart_version: "1.0.0-1"
+bahmni_mart_version: "2.0.0-1"
 analytics_db_user: analytics
 metabase_db_user: metabase
 analytics_db_name: analytics
@@ -7,5 +7,14 @@ openmrs_db_password:
 metabase_db_password:
 analytics_db_password:
 metabase_with_ssl: false
+# When metabase_with_ssl is true you can choose for one of the following
+  # lets'encrypt ssl: where bahmni_lets_encrypt_cert_dir and metabase_keystore_password are mandatory
+  # custom ssl: where primary_custom_keystore_location and metabase_keystore_password are mandatory
+
+# let's encrypt ssl
 bahmni_lets_encrypt_cert_dir: ""
+
+# custom ssl
+custom_keystore_location: ""
+
 metabase_keystore_password: ""

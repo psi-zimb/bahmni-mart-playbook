@@ -12,7 +12,8 @@ Automated ansible playbook to deploy [bahmni-mart](https://github.com/bahmni-msf
 
 
 ### HTTPS for metabase
-
+* Update metabase_with_ssl to true
+#### Let's encrypt ssl
 Certificates generated from [let's encrypt](https://bahmni.atlassian.net/wiki/spaces/BAH/pages/35586093/Configure+Valid+SSL+Certificates) can be used for metabase by converting them into jks format.
 Update the following properties in setup.yml to run metabase with https.
 
@@ -29,7 +30,13 @@ Since let's encrypt certificates expires after 90 days, you need to regenerate j
 Stop metabase container and update metabase docker container
 
 ```docker-compose -f /opt/bahmni-mart/metabase-ssl-docker-compose.yml up -d```
- 
+#### Custom ssl
+If you use other than let's encrypt certificates, generate jks(Java Key Store) file from your ssl certificate and provide jks file path in **custom_keystore_location** and provide the **metabase_keystore_password**(password which was used to generating jks file)
  ### Command to deploy
-  
-```foo@bar:~# ansible-playbook -i /etc/bahmni-mart-playbook/inventories/bahmni-mart /etc/bahmni-mart-playbook/all.yml --extra-vars '@/etc/bahmni-mart-playbook/setup.yml'```
+ #### Metabase without ssl
+```foo@bar:~# ansible-playbook -i /etc/bahmni-mart-playbook/inventories/bahmni-mart /etc/bahmni-mart-playbook/all.yml --extra-vars '@/etc/bahmni-mart-playbook/setup.yml' --skip-tags "custom_ssl,lets_encrypt_ssl"```
+#### Metabase with let's encrypt ssl
+```foo@bar:~# ansible-playbook -i /etc/bahmni-mart-playbook/inventories/bahmni-mart /etc/bahmni-mart-playbook/all.yml --extra-vars '@/etc/bahmni-mart-playbook/setup.yml' --skip-tags "without_ssl,custom_ssl"```
+#### Metabase with custom ssl
+```foo@bar:~# ansible-playbook -i /etc/bahmni-mart-playbook/inventories/bahmni-mart /etc/bahmni-mart-playbook/all.yml --extra-vars '@/etc/bahmni-mart-playbook/setup.yml' --skip-tags "without_ssl,lets_encrypt_ssl"```
+
