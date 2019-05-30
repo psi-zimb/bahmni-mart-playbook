@@ -34,15 +34,9 @@ Stop metabase container and update metabase docker container
 If you use other than let's encrypt certificates, generate jks(Java Key Store) file from your ssl certificate and provide jks file path in **custom_keystore_location** and provide the **metabase_keystore_password**(password which was used to generating jks file)
  ### Command to deploy
  #### Metabase without ssl
-```bash
-ansible-playbook -i /etc/bahmni-mart-playbook/inventories/bahmni-mart /etc/bahmni-mart-playbook/all.yml --extra-vars '@/etc/bahmni-mart-playbook/setup.yml' --skip-tags "custom_ssl,lets_encrypt_ssl"
-```
-#### Metabase with let's encrypt ssl(optional)
-```bash
-ansible-playbook -i /etc/bahmni-mart-playbook/inventories/bahmni-mart /etc/bahmni-mart-playbook/all.yml --extra-vars '@/etc/bahmni-mart-playbook/setup.yml' --skip-tags "without_ssl,custom_ssl"
-```
-#### Metabase with custom ssl(optional)
-```bash
-ansible-playbook -i /etc/bahmni-mart-playbook/inventories/bahmni-mart /etc/bahmni-mart-playbook/all.yml --extra-vars '@/etc/bahmni-mart-playbook/setup.yml' --skip-tags "without_ssl,lets_encrypt_ssl"
-```
+```foo@bar:~# ansible-playbook -i /etc/bahmni-mart-playbook/inventories/bahmni-mart /etc/bahmni-mart-playbook/all.yml --extra-vars '@/etc/bahmni-mart-playbook/setup.yml' --skip-tags "custom_ssl,lets_encrypt_ssl"```
+#### Metabase with let's encrypt ssl
+```foo@bar:~# ansible-playbook -i /etc/bahmni-mart-playbook/inventories/bahmni-mart /etc/bahmni-mart-playbook/all.yml --extra-vars '@/etc/bahmni-mart-playbook/setup.yml' --skip-tags "without_ssl,custom_ssl"```
+#### Metabase with custom ssl
+```foo@bar:~# ansible-playbook -i /etc/bahmni-mart-playbook/inventories/bahmni-mart /etc/bahmni-mart-playbook/all.yml --extra-vars '@/etc/bahmni-mart-playbook/setup.yml' --skip-tags "without_ssl,lets_encrypt_ssl"```
 
