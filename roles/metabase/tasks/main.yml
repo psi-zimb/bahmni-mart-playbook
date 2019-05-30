@@ -114,19 +114,42 @@
 
 - name: Create metabase docker container without ssl certificates
   command: docker-compose -f {{ metabase_docker_compose_location }} up -d
-  when: metabase_with_ssl is not defined
-            or metabase_with_ssl|bool == false
-            or not bahmni_lets_encrypt_cert_dir
-            or not metabase_keystore_password
+  tags:
+  - without_ssl
 
-- name: Create metabase docker container with ssl certificates
+- name: Check whether required properties provided for metabase with ssl
+  fail:
+    msg: Metabase with let's encrypt ssl expects metabase_with_ssl as true with valid values for bahmni_lets_encrypt_cert_dir and metabase_keystore_password
+  when: metabase_with_ssl|bool == false
+              or not bahmni_lets_encrypt_cert_dir
+              or not metabase_keystore_password
+  tags:
+    - lets_encrypt_ssl
+
+- name: Create metabase docker container with let's encrypt ssl certificates
   shell: |
     /opt/bahmni-mart/bin/pemtojks.sh {{ bahmni_lets_encrypt_cert_dir }} {{ metabase_keystore_password }}
     docker-compose -f {{ metabase_ssl_docker_compose_location }} up -d
-  when: metabase_with_ssl is defined
-            and metabase_with_ssl|bool == true
-            and bahmni_lets_encrypt_cert_dir
-            and metabase_keystore_password
+  when: passive is not defined or passive !='yes'
+  tags:
+  - lets_encrypt_ssl
+
+- name: Check whether required properties provided for metabase with ssl
+  fail:
+    msg: Metabase with custom ssl expects metabase_with_ssl as true with valid values for custom_keystore_location and metabase_keystore_password
+  when: metabase_with_ssl|bool == false
+              or not custom_keystore_location
+              or not metabase_keystore_password
+  tags:
+    - custom_ssl
+
+- name: Create metabase docker container with custom ssl certificates
+  shell: |
+    cp {{ custom_keystore_location }} /etc/metabase/ssl/metabase_ssl.jks
+    docker-compose -f {{ metabase_ssl_docker_compose_location }} up -d
+  when: passive is not defined or passive !='yes'
+  tags:
+  - custom_ssl
 
 - block:
 
