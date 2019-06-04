@@ -5,7 +5,7 @@
     state: present
     block: |
       {% for host in groups[master_and_slave_nodes] %}
-      {% if host not in [False, 'localhost', '127.0.0.1'] %}
+      {% if host not in [False, 'localhost', '127.0.0.1'] or host %}
       host all all {{ hostvars.get(host, {}).get('ansible_ssh_host') or host }}/32	trust
       {% endif %}
       {% endfor %}
