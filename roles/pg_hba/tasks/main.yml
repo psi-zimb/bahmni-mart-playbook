@@ -1,9 +1,15 @@
 - name: Add postgres authentication(pg_hba.conf) for replication
   blockinfile:
     dest: /var/lib/pgsql/{{ postgres_version }}/data/pg_hba.conf
-    marker: "#<!-- {mark} ANSIBLE MANAGED BLOCK postgres replication authentication for {{slave_db_group}}-->"
+    marker: "#<!-- {mark} ANSIBLE MANAGED BLOCK postgres replication authentication for {{slave_db_group}} and access to master and slave-->"
     state: present
     block: |
+      {% for host in groups[master_and_slave_nodes] %}
+      {% if host not in [False, 'localhost', '127.0.0.1'] or host %}
+      host all all {{ hostvars.get(host, {}).get('ansible_ssh_host') or host }}/32	trust
+      {% endif %}
+      {% endfor %}
+
       {% for host in groups[slave_db_group] %}
       {% if host not in [False, 'localhost', '127.0.0.1'] and host != inventory_hostname %}
       host replication {{ db_user }} {{ hostvars.get(host, {}).get('ansible_ssh_host') or host }}/32	trust   #Authentication for replication
