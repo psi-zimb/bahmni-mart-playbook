@@ -9,61 +9,59 @@
 
 - block:
 
-    - name: Check if postgres yum repo rpm is present {{ bahmniVersion.stdout }}
+    - name: Check if postgres92 yum repo rpm is present {{ bahmniVersion.stdout }}
       stat: path={{postgres92_repo_rpm_location}}
       register: postgresRepoRpm
 
-    - name: Download postgres yum repo rpm if not present
+    - name: Download postgres92 yum repo rpm if not present
       command: "wget -q -O {{ postgres92_repo_rpm_location }} {{postgres92_repo_download_url}} creates={{ postgres92_repo_rpm_location }}"
       when: postgresRepoRpm.stat.exists == false
 
-    - name: Install postgresql yum repository
+    - name: Install postgresql92 yum repository
       yum: name={{postgres92_repo_rpm_location}} state=present
 
-    - name: Install postgresql
+    - name: Install postgresql92
       yum: name="postgresql92-server" state=present
 
-    - name: Install postgresql-contrib
+    - name: Install postgresql92-contrib
       yum: name="postgresql92-contrib" state=present
 
-    - name: Register postgres version
+    - name: Register postgres version as 9.2
       set_fact:
          postgres_version: "{{postgres92_version}}"
-
-
+         postgres_bin_version: "{{postgres92_bin_version}}"
 
   when: bahmniVersion.stdout == "0.91"
 
 
 - block:
 
-    - name: Check if postgres yum repo rpm is present
+    - name: Check if postgres96 yum repo rpm is present
       stat: path={{postgres96_repo_rpm_location}}
       register: postgresRepoRpm
 
-    - name: Download postgres yum repo rpm if not present
+    - name: Download postgres96 yum repo rpm if not present
       command: "wget -q -O {{ postgres96_repo_rpm_location }} {{postgres96_repo_download_url}} creates={{ postgres96_repo_rpm_location }}"
       when: postgresRepoRpm.stat.exists == false
 
-    - name: Install postgresql yum repository
+    - name: Install postgresql96 yum repository
       yum: name={{postgres96_repo_rpm_location}} state=present
 
-    - name: Install postgresql
+    - name: Install postgresql96
       yum: name="postgresql96-server" state=present
 
-    - name: Install postgresql-contrib
+    - name: Install postgresql96-contrib
       yum: name="postgresql96-contrib" state=present
 
-    - name: Register postgres version
+    - name: Register postgres version as 9.6
       set_fact:
         postgres_version: "{{postgres96_version}}"
+        postgres_bin_version: "{{postgres96_bin_version}}"
 
   when: bahmniVersion.stdout != "0.91"
 
-- debug:
-    var: "{{ postgres_version }}"
 - name: Initiate database {{postgres_version}}
-  command: service postgresql-{{ postgres_version }} initdb creates=/var/lib/pgsql/data/postgresql.conf
+  command: /usr/pgsql-{{postgres_version}}/bin/postgresql{{postgres_bin_version}}-setup initdb creates=/var/lib/pgsql/{{postgres_version}}/data/postgresql.conf
 
 - name: Copy postgresql conf
   template:

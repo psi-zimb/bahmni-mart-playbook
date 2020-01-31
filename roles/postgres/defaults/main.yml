@@ -7,3 +7,5 @@ postgres92_repo_rpm_location: "{{download_folder}}/{{ postgres92_repo_rpm_name}}
 postgres96_repo_rpm_location: "{{download_folder}}/{{ postgres96_repo_rpm_name}}"
 postgres92_version: 9.2
 postgres96_version: 9.6
+postgres92_bin_version: 92
+postgres96_bin_version: 96

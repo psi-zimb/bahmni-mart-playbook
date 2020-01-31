@@ -1,15 +1,16 @@
-#
-#- name: Check if bahmni-mart rpm needs an update
-#  yum:
-#    list: bahmni-mart
-#  register: installed_bahmni_mart
-#  ignore_errors: true
-#
-#- name: Uninstall bahmni-mart rpm
-#  yum: name="bahmni-mart" state=absent
-#  when: installed_bahmni_mart.results|length != 0 and installed_bahmni_mart.results[0].version != "{{ bahmni_mart_version }}"
+
+- name: Check if bahmni-mart rpm needs an update
+  yum:
+    list: bahmni-mart
+  register: installed_bahmni_mart
+  ignore_errors: true
+
+- name: Uninstall bahmni-mart rpm
+  yum: name="bahmni-mart" state=absent
+  when: installed_bahmni_mart.results|length != 0 and installed_bahmni_mart.results[0].version != "{{ bahmni_mart_version }}"
 
 - name: Install bahmni-mart using URL
+#  yum: name="{{ bahmni_mart_url }}" state=present
   command: yum install /home/vagrant/bahmni-mart-1.0.0-1.noarch.rpm
 
 - name: Copy logback.xml file
