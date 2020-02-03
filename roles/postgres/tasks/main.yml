@@ -1,4 +1,36 @@
 # This is copied from bahmni-playbooks and will be deleted after merged with bahmni.
+- name: Install python-psycopg2
+  yum: name=python-psycopg2 state=present
+
+- name: Check Bahmni-installer version on command box
+  local_action: command rpm -q bahmni-installer --qf "%{VERSION}\n"
+  register: bahmniVersion
+
+- block:
+  - name: Evaluate postgres versions for bahmni 0.91 version
+    set_fact:
+      postgres_repo_rpm_location: "{{postgres92_repo_rpm_location}}"
+      postgres_repo_download_url: "{{postgres92_repo_download_url}}"
+      postgresql_server: "postgresql92-server"
+      postgresql_contrib: "postgresql92-contrib"
+      postgres_version: "{{postgres92_version}}"
+      postgres_bin_version: "{{postgres92_bin_version}}"
+
+  when: bahmniVersion.stdout == "0.91"
+
+- block:
+  - name: Evaluate postgres versions for other bahmni versions
+    set_fact:
+      postgres_repo_rpm_location: "{{postgres96_repo_rpm_location}}"
+      postgres_repo_download_url: "{{postgres96_repo_download_url}}"
+      postgresql_server: "postgresql96-server"
+      postgresql_contrib: "postgresql96-contrib"
+      postgres_version: "{{postgres96_version}}"
+      postgres_bin_version: "{{postgres96_bin_version}}"
+
+  when: bahmniVersion.stdout != "0.91"
+
+
 - name: Check if postgres yum repo rpm is present
   stat: path={{postgres_repo_rpm_location}}
   register: postgresRepoRpm
@@ -10,17 +42,14 @@
 - name: Install postgresql yum repository
   yum: name={{postgres_repo_rpm_location}} state=present
 
-- name: Install python-psycopg2
-  yum: name=python-psycopg2 state=present
-
-- name: Install postgresql
-  yum: name="postgresql92-server" state=present
+- name: Install postgresql-{{postgres_version}}
+  yum: name="postgresql-server" state=present
 
 - name: Install postgresql-contrib
-  yum: name="postgresql92-contrib" state=present
+  yum: name="postgresql-contrib" state=present
 
-- name: Initiate database
-  command: service postgresql-{{ postgres_version }} initdb creates=/var/lib/pgsql/data/postgresql.conf
+- name: Initiate database {{postgres_version}}
+  command: /usr/pgsql-{{postgres_version}}/bin/postgresql{{postgres_bin_version}}-setup initdb creates=/var/lib/pgsql/{{postgres_version}}/data/postgresql.conf
 
 - name: Copy postgresql conf
   template:
