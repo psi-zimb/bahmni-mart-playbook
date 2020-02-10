@@ -1,6 +1,5 @@
 # This is copied from bahmni-playbooks and will be deleted after merged with bahmni.
-- name: Install python-psycopg2
-  yum: name=python-psycopg2 state=present
+
 
 - name: Check Bahmni-installer version on command box
   local_action: command rpm -q bahmni-installer --qf "%{VERSION}\n"
@@ -38,14 +37,22 @@
 - name: Install postgresql yum repository
   yum: name={{postgres_repo_rpm_location}} state=present
 
+- name: Install python-psycopg2
+  yum: name=python-psycopg2 state=present
+
 - name: Install postgresql-{{postgres_version}}
   yum: name="postgresql{{postgres_bin_version}}-server" state=present
 
 - name: Install postgresql-contrib
   yum: name="postgresql{{postgres_bin_version}}-contrib" state=present
 
-- name: Initiate database {{postgres_version}}
+- name: Initiate database for postgresql 9.2
+  command: service postgresql-{{ postgres_version }} initdb creates=/var/lib/pgsql/data/postgresql.conf
+  when: isBahmniLessthan92 and postgres_version == 9.2
+
+- name: Initiate database for postgresql 9.6
   command: /usr/pgsql-{{postgres_version}}/bin/postgresql{{postgres_bin_version}}-setup initdb creates=/var/lib/pgsql/{{postgres_version}}/data/postgresql.conf
+  when: isBahmniLessthan92 == false and postgres_version == 9.6
 
 - name: Copy postgresql conf
   template:
