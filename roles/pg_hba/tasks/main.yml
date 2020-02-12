@@ -2,15 +2,19 @@
   local_action: command rpm -q bahmni-installer --qf "%{VERSION}"
   register: bahmniVersion
 
+- name: Evaluate Bahmni Version
+  set_fact:
+    isBahmniLessthan92: "{{ bahmniVersion.stdout == \"0.91\" or bahmniVersion.stdout == \"0.90\" or bahmniVersion.stdout == \"0.89\" }}"
+
 - name: Register postgres version as 9.2
   set_fact:
     postgres_version: "{{postgres92_version}}"
-  when: bahmniVersion.stdout == "0.91"
+  when: isBahmniLessthan92
 
 - name: Register postgres version as 9.6
   set_fact:
     postgres_version: "{{postgres96_version}}"
-  when: bahmniVersion.stdout != "0.91"
+  when: isBahmniLessthan92 == false
 
 - name: Add postgres authentication(pg_hba.conf) for replication
   blockinfile:
