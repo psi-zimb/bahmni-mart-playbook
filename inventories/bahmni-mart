@@ -12,7 +12,6 @@ localhost
 [bahmni-mart-db-slave]
 
 [bahmni-mart-scdf]
-localhost
 
 [metabase]
 localhost
