@@ -15,3 +15,6 @@ bahmni_lets_encrypt_cert_dir: ""
 custom_keystore_location: ""
 
 metabase_keystore_password: ""
+
+# Absolute path to bahmni-mart.rpm
+bahmni_mart_url: ""
